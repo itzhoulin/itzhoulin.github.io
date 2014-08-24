@@ -12,6 +12,7 @@ categories:  [test]
 
 \^_^  后面的请无视，测试并熟悉一下markdown而已
 
+<!-- more -->
 
 # 一级标题
 ## 二级标题
