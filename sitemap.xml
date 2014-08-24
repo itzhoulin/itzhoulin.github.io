@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://blog.itzhoulin.com/blog/2014/08/24/deploy-a-blog-using-octopress-hosted-in-github/</loc>
+    <lastmod>2014-08-24T14:28:54+08:00</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.itzhoulin.com/blog/2014/08/24/new-blog-using-octopress-with-github-page/</loc>
     <lastmod>2014-08-24T10:57:29+08:00</lastmod>
     <priority>0.8</priority>
@@ -11,14 +17,14 @@
   
   <url>
     <loc>http://blog.itzhoulin.com/blog/archives/</loc>
-    <lastmod>2014-08-24T14:17:41+08:00</lastmod>
+    <lastmod>2014-08-24T16:02:38+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.itzhoulin.com/</loc>
-    <lastmod>2014-08-24T14:17:41+08:00</lastmod>
+    <lastmod>2014-08-24T16:02:38+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>

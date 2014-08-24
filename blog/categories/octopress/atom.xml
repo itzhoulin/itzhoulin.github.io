@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Octopress | zhoulin的IT工作之旅]]></title>
+  <link href="http://blog.itzhoulin.com/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://blog.itzhoulin.com/"/>
+  <updated>2014-08-24T16:02:38+08:00</updated>
+  <id>http://blog.itzhoulin.com/</id>
+  <author>
+    <name><![CDATA[zhoulin]]></name>
+    <email><![CDATA[zhoulin@itzhoulin.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Deploy a Blog Using Octopress Hosted in Github]]></title>
+    <link href="http://blog.itzhoulin.com/blog/2014/08/24/deploy-a-blog-using-octopress-hosted-in-github/"/>
+    <updated>2014-08-24T14:28:54+08:00</updated>
+    <id>http://blog.itzhoulin.com/blog/2014/08/24/deploy-a-blog-using-octopress-hosted-in-github</id>
+    <content type="html"><![CDATA[<p>这里将就详细讲解一下如何利用octopress在github上部署一个博客程序，既方便写博客又无需考虑托管问题，同时天然的在本地有一个备份，所有操作都基于git，有无限版本控制。使用markdown书写具体的博客内容，自带代码高亮解决方案。</p>
+
+<p>github使用的博客引擎是<strong>Jekyll</strong>，octopress也是利用Jekyll引擎来开发博客的，因此生成的博客系统可以直接在github pages上运行良好。</p>
+
+<h2>环境说明:</h2>
+
+<p>本地环境是在ubuntukylin14.04.1系统下部署的，其他系统也没问题，只需要支持ruby，git</p>
+
+<p>本文主要参照octopress官网和破船之家的教程写的。</p>
+
+<h2>目录</h2>
+
+<ol>
+<li><a href="#ruby_git_install">Ruby等依赖安装</a></li>
+<li><a href="#octopress_install">octopress安装</a></li>
+<li><a href="#octopress_config">octopress配置</a></li>
+<li><a href="#deploy2github">部署到github</a></li>
+<li><a href="#post_blog">发布博客</a></li>
+<li><a href="#ruby_git_install">Ruby等依赖安装</a></li>
+</ol>
+
+
+<h2>1.Ruby等依赖安装</h2>
+
+<p><a id="ruby_git_install">Ruby </a>需要1.9.3版本的，同时由于Jekyll和octopress都是ruby写的，会有诸多ruby依赖，建议切换ruby源为国内源。对于git版本没有太大要求。</p>
+
+<h4>Install Ruby</h4>
+
+<p>查看ruby版本方法如下</p>
+
+<pre><code>ruby --version
+</code></pre>
+
+<p>如果版本符合要求则进入下一步，否则请参照<a href="https://www.ruby-lang.org/en/downloads/">官方手册安装ruby</a>或者使用<a href="http://octopress.org/docs/setup/rvm/">RVM</a>来安装。</p>
+
+<h4>安装bundler</h4>
+
+<p>bundle可以自动解决依赖，安装方法如下：</p>
+
+<pre><code>gem install bundler
+</code></pre>
+
+<p>建议国内用户切换gem源为国内源，方法如下：</p>
+
+<pre><code class="bash">#删除官方源
+gem source -r https://rubygems.org/
+#添加淘宝源
+gem source -a http://ruby.taobao.org/
+#查看当前源
+gem source -l
+</code></pre>
+
+<h4>安装git</h4>
+
+<p>如果已经安装git，执行命令返回值为具体版本，否则请自行<a href="http://git-scm.com/">安装git</a></p>
+
+<pre><code>git --version
+#git version 1.9.1
+</code></pre>
+
+<h2>2.octopress安装</h2>
+
+<p><a id="octopress_install">octopress </a>的安装也比较简单，下载源码后会有Gemfile文件来指示所有依赖，使用bundle即可。</p>
+
+<h4>下载源码</h4>
+
+<pre><code class="bash">git clone git://github.com/imathis/octopress.git octopress
+cd octopress
+</code></pre>
+
+<h4>安装octopress</h4>
+
+<p>使用bundle自动安装，将下面的内容写入文件Gemfile中放在站点仓库根目录下</p>
+
+<pre><code>source "http://ruby.taobao.org"
+gem 'github-pages'
+</code></pre>
+
+<p>这样执行命令<strong><em>bundle install</em></strong>就会自动安装所有octopress及其所有依赖。</p>
+
+<p><strong>注意：</strong>
+如果上面的命令执行失败，提示下面的错误：</p>
+
+<pre><code>Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native extension.
+
+        /usr/bin/ruby1.9.1 extconf.rb 
+/usr/lib/ruby/1.9.1/rubygems/custom_require.rb:36:in `require': cannot load such file -- mkmf (LoadError)
+</code></pre>
+
+<p>请执行下面的命令安装ruby1.9.1-dev</p>
+
+<pre><code>sudo apt-get install ruby1.9.1-dev
+</code></pre>
+
+<h4>安装octopress默认主题</h4>
+
+<pre><code>rake install
+</code></pre>
+
+<p>在octopress根目录下的Rakefile定义了如何将octopress跟Jekyll连接起来，rake打包了一些常见的如发布博客主题、生成博客数据、发布博客等一系列命令来简化博主的操作。直接使用Jekyll每一个任务都需要不少命令和文件编辑。</p>
+
+<h4>tips： 保持Jekyll最新</h4>
+
+<p>由于Jekyll更新比较频繁，为了确保你在本地调试的时候看到的网站效果跟GitHub Pages上的一致，务必时常更新Jekyll，推荐使用bundle更新，命令如下：</p>
+
+<pre><code>bundle update
+</code></pre>
+
+<h2>3.octopress配置</h2>
+
+<p>实际上octopress已经很好的隐藏了Jekyll的诸多配置，我们只需要简单操作几个文件。octopress就会自动生成相应的Jekyll配置。这里我们仅仅讲解一下_config.yml文件的部分配置项，具体请看官网<a href="http://octopress.org/docs/configuring/">Configuring Octopress</a>。</p>
+
+<p>该文件的配置分为三大部分:Main config、Jekyll&amp;Plugin、3rd Party Settings。</p>
+
+<h4>Main config</h4>
+
+<pre><code class="yaml">url:                # For rewriting urls for RSS, etc
+title:              # Used in the header and title tags
+subtitle:           # A description used in the header
+author:             # Your name, for RSS, Copyright, Metadata
+simple_search:      # Search engine for simple site search
+description:        # A default meta description for your site
+date_format:        # Format dates using Ruby's date strftime syntax
+subscribe_rss:      # Url for your blog's feed, defauts to /atom.xml
+subscribe_email:    # Url to subscribe by email (service required)
+category_feeds:     # Enable per category RSS feeds (defaults to false in 2.1)
+email:              # Email address for the RSS feed if you want it.
+</code></pre>
+
+<p>注释说明已经很详细了，有一点需要强调的是，<strong>如果你想启用自己的域名来访问，这里的url务必修改为你自己的域名，否则即便你添加了CNAME文件，使用rake部署的时候也不会部署该CNAME文件</strong>。</p>
+
+<p><strong><em>建议：</em></strong></p>
+
+<ul>
+<li>最好把里面的twitter相关的信息全部删掉，否则由于GFW的原因，将会造成页面load很慢。</li>
+<li>同理，修改定制文件/source/_includes/custom/head.html 把google的自定义字体去掉。from<a href="http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/">唐巧的博文中—配置</a></li>
+</ul>
+
+
+<p><strong><em>注意：</em></strong></p>
+
+<p><em>确保不使用跟其他project同名的分类名，因为这样会引起路径冲突。</em></p>
+
+<p>参考链接：</p>
+
+<ol>
+<li><a href="http://octopress.org/docs/">octopress</a></li>
+<li><a href="http://beyondvincent.com/blog/2013/08/03/108-creating-a-github-blog-using-octopress/">破船之家</a></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>

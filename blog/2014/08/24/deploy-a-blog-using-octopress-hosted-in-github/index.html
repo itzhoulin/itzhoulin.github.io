@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>zhoulin的IT工作之旅</title>
+  <title>Deploy a Blog Using Octopress Hosted in Github - zhoulin的IT工作之旅</title>
   <meta name="author" content="zhoulin">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.itzhoulin.com">
+  <link rel="canonical" href="http://blog.itzhoulin.com/blog/2014/08/24/deploy-a-blog-using-octopress-hosted-in-github">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="zhoulin的IT工作之旅" type="application/atom+xml">
@@ -75,15 +75,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/08/24/deploy-a-blog-using-octopress-hosted-in-github/">Deploy a Blog Using Octopress Hosted in Github</a></h1>
+      <h1 class="entry-title">Deploy a Blog Using Octopress Hosted in Github</h1>
     
     
       <p class="meta">
@@ -99,7 +96,7 @@
   </header>
 
 
-  <div class="entry-content"><p>这里将就详细讲解一下如何利用octopress在github上部署一个博客程序，既方便写博客又无需考虑托管问题，同时天然的在本地有一个备份，所有操作都基于git，有无限版本控制。使用markdown书写具体的博客内容，自带代码高亮解决方案。</p>
+<div class="entry-content"><p>这里将就详细讲解一下如何利用octopress在github上部署一个博客程序，既方便写博客又无需考虑托管问题，同时天然的在本地有一个备份，所有操作都基于git，有无限版本控制。使用markdown书写具体的博客内容，自带代码高亮解决方案。</p>
 
 <p>github使用的博客引擎是<strong>Jekyll</strong>，octopress也是利用Jekyll引擎来开发博客的，因此生成的博客系统可以直接在github pages上运行良好。</p>
 
@@ -143,7 +140,7 @@
 
 <p>建议国内用户切换gem源为国内源，方法如下：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -155,7 +152,7 @@
 </span><span class='line'>gem <span class="nb">source</span> -a http://ruby.taobao.org/
 </span><span class='line'><span class="c">#查看当前源</span>
 </span><span class='line'>gem <span class="nb">source</span> -l
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 
 <h4>安装git</h4>
@@ -172,11 +169,11 @@
 
 <h4>下载源码</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone git://github.com/imathis/octopress.git octopress
 </span><span class='line'><span class="nb">cd </span>octopress
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 
 <h4>安装octopress</h4>
@@ -192,7 +189,7 @@ gem 'github-pages'
 <p><strong>注意：</strong>
 如果上面的命令执行失败，提示下面的错误：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -200,7 +197,7 @@ gem 'github-pages'
 </span><span class='line'>
 </span><span class='line'>        /usr/bin/ruby1.9.1 extconf.rb
 </span><span class='line'>/usr/lib/ruby/1.9.1/rubygems/custom_require.rb:36:in <span class="sb">`</span>require<span class="err">&#39;</span>: cannot load such file -- mkmf <span class="o">(</span>LoadError<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 
 <p>请执行下面的命令安装ruby1.9.1-dev</p>
@@ -230,7 +227,7 @@ gem 'github-pages'
 
 <h4>Main config</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -252,7 +249,7 @@ gem 'github-pages'
 </span><span class='line'><span class="l-Scalar-Plain">subscribe_email</span><span class="p-Indicator">:</span>    <span class="c1"># Url to subscribe by email (service required)</span>
 </span><span class='line'><span class="l-Scalar-Plain">category_feeds</span><span class="p-Indicator">:</span>     <span class="c1"># Enable per category RSS feeds (defaults to false in 2.1)</span>
 </span><span class='line'><span class="l-Scalar-Plain">email</span><span class="p-Indicator">:</span>              <span class="c1"># Email address for the RSS feed if you want it.</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 
 <p>注释说明已经很详细了，有一点需要强调的是，<strong>如果你想启用自己的域名来访问，这里的url务必修改为你自己的域名，否则即便你添加了CNAME文件，使用rake部署的时候也不会部署该CNAME文件</strong>。</p>
@@ -277,104 +274,69 @@ gem 'github-pages'
 </ol>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
+  
+
+<span class="byline author vcard">Posted by <span class="fn">zhoulin</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2014-08-24T14:28:54+08:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>2:28 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/github/'>github</a>, <a class='category' href='/blog/categories/octopress/'>octopress</a>
+  
+</span>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2014/08/24/new-blog-using-octopress-with-github-page/">New Blog Using Octopress With Github Page</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-08-24T10:57:29+08:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:57 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>这是利用octopress生成blog部署在github上的第一篇博客，也是一个<strong><em>Hello World</em></strong>。</p>
-
-<p>后面会逐渐以这个平台为主发布自己的博客，老的wordpress里的老文章会挑选大部分过来，如有可能，两个平台都会更新的。</p>
-
-<p>^_^  后面的请无视，测试并熟悉一下markdown而已</p>
-
-<h1>一级标题</h1>
-
-<h2>二级标题</h2>
-
-<h3>三级标题</h3>
-
-<h4>四级标题</h4>
-
-<h5>五级？</h5>
-
-<hr />
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/python</span>
-</span><span class='line'><span class="c">#这里测试代码</span>
-</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="s">&quot;Hello World !&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<hr />
-
-<blockquote><p>这里是引用，</p></blockquote>
-
-<hr />
-
-<ul>
-<li>你懂的</li>
-<li>我也懂</li>
-<li>大家懂</li>
-</ul>
-
-
-<hr />
-
-<ol>
-<li>第一条</li>
-<li>第二条</li>
-<li>第三条</li>
-</ol>
-
-
-<hr />
-
-<p>这里我需要<a href="http://blog.itzhoulin.com">连接</a></p>
-
-<hr />
-
-<p>传图却是一件相对而言麻烦一点点的事。
-看个美女放松一下
-<img class="center" src="/images/2014-08-24-1-helloworld.jpg" title="[图片测试] [图片测试]" ></p>
+      <div class="sharing">
+  
+  
 </div>
-  
-  
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/08/24/new-blog-using-octopress-with-github-page/" title="Previous Post: New Blog using octopress with github page">&laquo; New Blog using octopress with github page</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+  <section>
+    <h1>Comments</h1>
+    <div id="comments" aria-live="polite"><!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread"></div>
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"itzhoulin-github"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+<!-- Duoshuo Comment END -->
 </div>
+  </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -394,6 +356,7 @@ gem 'github-pages'
 
   
 </aside>
+
 
     </div>
   </div>
