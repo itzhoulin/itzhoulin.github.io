@@ -4,7 +4,7 @@
   <title><![CDATA[zhoulin的IT工作之旅]]></title>
   <link href="http://blog.itzhoulin.com/atom.xml" rel="self"/>
   <link href="http://blog.itzhoulin.com/"/>
-  <updated>2014-08-24T16:02:38+08:00</updated>
+  <updated>2014-08-24T17:06:29+08:00</updated>
   <id>http://blog.itzhoulin.com/</id>
   <author>
     <name><![CDATA[zhoulin]]></name>
@@ -18,9 +18,12 @@
     <link href="http://blog.itzhoulin.com/blog/2014/08/24/deploy-a-blog-using-octopress-hosted-in-github/"/>
     <updated>2014-08-24T14:28:54+08:00</updated>
     <id>http://blog.itzhoulin.com/blog/2014/08/24/deploy-a-blog-using-octopress-hosted-in-github</id>
-    <content type="html"><![CDATA[<p>这里将就详细讲解一下如何利用octopress在github上部署一个博客程序，既方便写博客又无需考虑托管问题，同时天然的在本地有一个备份，所有操作都基于git，有无限版本控制。使用markdown书写具体的博客内容，自带代码高亮解决方案。</p>
+    <content type="html"><![CDATA[<p>这里将详细讲解一下如何利用octopress在github上部署一个博客程序，既方便写博客又无需考虑托管问题，同时天然的在本地有一个备份，所有操作都基于git，有无限版本控制。使用markdown书写具体的博客内容，自带代码高亮解决方案。</p>
 
 <p>github使用的博客引擎是<strong>Jekyll</strong>，octopress也是利用Jekyll引擎来开发博客的，因此生成的博客系统可以直接在github pages上运行良好。</p>
+
+<!-- more -->
+
 
 <h2>环境说明:</h2>
 
@@ -36,7 +39,7 @@
 <li><a href="#octopress_config">octopress配置</a></li>
 <li><a href="#deploy2github">部署到github</a></li>
 <li><a href="#post_blog">发布博客</a></li>
-<li><a href="#ruby_git_install">Ruby等依赖安装</a></li>
+<li><a href="#summary">小结</a></li>
 </ol>
 
 
@@ -179,20 +182,210 @@ gem 'github-pages'
 <p><strong><em>建议：</em></strong></p>
 
 <ul>
-<li>最好把里面的twitter相关的信息全部删掉，否则由于GFW的原因，将会造成页面load很慢。</li>
+<li>最好把里面的twitter相关的信息全部删掉，否则由于GFW的原因，将会造成页面load很慢。涉及到的文件比较多，小心删除，如果以发表博客，_deploy目录下无需手动删除，重新生成博客后会自动删除。</li>
 <li>同理，修改定制文件/source/_includes/custom/head.html 把google的自定义字体去掉。from<a href="http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/">唐巧的博文中—配置</a></li>
 </ul>
 
 
-<p><strong><em>注意：</em></strong></p>
+<p><strong>关于另外两部分配置后面会有文详细介绍，这里略过。</strong></p>
 
-<p><em>确保不使用跟其他project同名的分类名，因为这样会引起路径冲突。</em></p>
+<h2>4.部署到github</h2>
 
-<p>参考链接：</p>
+<p><a id="deploy2github">github pages</a>支持托管，地址为<a href="https://pages.github.com/">https://pages.github.com/</a>。在这个页面你只需要大概了解一下什么事github page，如何申请就行了。</p>
+
+<ol>
+<li>新建一个仓库，名为your_user_name.github.io或organization.github.io，当然也可以是project，这个方法有点不一样，这里以your_user_name.github.io为例。</li>
+<li>在octopress根目录执行 <em>rake setup_github_pages</em> ，按照要求输入仓库地址等，这个命令会在跟目录下新建_deploy目录，这个会push到仓库的master分支，也就是访问博客的文件。</li>
+<li>生成博客， <em>rake generate</em> 这个会按照既定规则生成静态文件的博客。</li>
+<li>发布博客， <em>rake deploy</em> 将前一步生成的bo9ke拷贝到_deploy目录并push到github</li>
+</ol>
+
+
+<p><strong>注意：</strong></p>
+
+<p>第一次执行 <em>rake deploy</em> 的时候会报错如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> ! <span class="o">[</span>rejected<span class="o">]</span>        master -&gt; master <span class="o">(</span>non-fast-forward<span class="o">)</span>
+</span><span class='line'>error: failed to push some refs to <span class="s1">&#39;https://github.com/yeesterbunny/yeesterbunny.github.com.git&#39;</span>
+</span><span class='line'>hint: Updates were rejected because the tip of your current branch is behind
+</span><span class='line'>hint: its remote counterpart. Merge the remote changes <span class="o">(</span>e.g. <span class="s1">&#39;git pull&#39;</span><span class="o">)</span>
+</span><span class='line'>hint: before pushing again.
+</span><span class='line'>hint: See the <span class="s1">&#39;Note about fast-forwards&#39;</span> in <span class="s1">&#39;git push --help&#39;</span> <span class="k">for</span> details.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>解决方法是手动进入_deploy目录手动强制push一次。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>octopress/_deploy
+</span><span class='line'>git pull origin +master
+</span><span class='line'><span class="nb">cd</span> ..
+</span><span class='line'>rake deploy
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样再次执行就不会报错了。</p>
+
+<h4>博客本地预览</h4>
+
+<p>如果在部署到仓库之前，需要先预览一下博客，可以在终端输入 <em>rake preview</em> 命令，然后就能在浏览器中进行本地预览访问了： <a href="http://127.0.0.1:4000/">http://127.0.0.1:4000/</a>或<a href="http://localhost:4000/">http://localhost:4000/</a>，效果跟仓库中的一样。</p>
+
+<h4>提交源码用于备份</h4>
+
+<p>前面提到的deploy只是部署博客代码到github上面，整个octopress并没有提交，为了保证在任何地方随时发布博客，而无需再次详细配置以保证跟github上的最新代码一致，可以将当前octopress的源码存放到github的source分支下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git add .
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s1">&#39;Initial source commit&#39;</span>
+</span><span class='line'><span class="nv">$ </span>git push origin <span class="nb">source</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>5.新建博文</h2>
+
+<p><a id="post_blog">新建博文</a>也非常简单，octopress已经预定义了脚本 <strong><em>rake new_post[&ldquo;title&rdquo;]</em></strong> 方便我们操作，因为Jekyll有一套固定的文档路径以及命名规范，需要按照它的规定来实现才能成功生成博文。博文必须存储在source/_posts目录下，并且需要按照Jekyll的命名规范对文章进行命名：YYYY-MM-DD-post-title.markdown。文章的名字会被当做url的一部分，而其中的日期用于对博文的区分和排序。</p>
+
+<p>new_post执行后会自动新建博文，并在相应的markdown文件中写入yaml元数据。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="nn">---</span>
+</span><span class='line'><span class="l-Scalar-Plain">layout</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">post</span>
+</span><span class='line'><span class="l-Scalar-Plain">title</span><span class="p-Indicator">:</span> <span class="s">&quot;title&quot;</span>
+</span><span class='line'><span class="l-Scalar-Plain">date</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2013-08-03 16:36</span>
+</span><span class='line'><span class="l-Scalar-Plain">comments</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</span><span class='line'><span class="l-Scalar-Plain">categories</span><span class="p-Indicator">:</span>
+</span><span class='line'><span class="nn">---</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里的categories是自定义的分类名，支持的定义方式如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="c1"># One category</span>
+</span><span class='line'><span class="l-Scalar-Plain">categories</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Sass</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># Multiple categories example 1</span>
+</span><span class='line'><span class="l-Scalar-Plain">categories</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">CSS3</span><span class="p-Indicator">,</span> <span class="nv">Sass</span><span class="p-Indicator">,</span> <span class="nv">Media Queries</span><span class="p-Indicator">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># Multiple categories example 2</span>
+</span><span class='line'><span class="l-Scalar-Plain">categories</span><span class="p-Indicator">:</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">CSS3</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Sass</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Media Queries</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>除此之外，还支持 <strong><em>author: Your Name</em></strong> 来指明作者，支持 <strong><em>published: false</em></strong> 表明当前博文是草稿暂时不发布。</p>
+
+<h4>发布博文完整流程：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>rake new_post<span class="o">[</span><span class="s2">&quot;New Post&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="c">#edit the file source/_posts/{DATETIME}-New-Post.markdown</span>
+</span><span class='line'>rake generate
+</span><span class='line'>git add .
+</span><span class='line'>git commit -am <span class="s2">&quot;Some comment here.&quot;</span>
+</span><span class='line'>git push origin <span class="nb">source</span>
+</span><span class='line'>rake deploy
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>新建页面</h4>
+
+<p>你可以在博客源目录下任意地方添加页面，Jekyll会自动拼接，对应的url地址也会根据页面路径自动生成 ，如果要添加 <strong><em>about.markdown</em></strong> ，那么就会生成 <strong><em>site.com/about.html</em></strong> ，如果你想要的url地址是 <strong><em>site.com/about/</em></strong> ,你需要新建的页面应该是 <strong><em>about/index.markdown</em></strong> .同样的，octopress也有脚本完成这个操作。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>rake new_page<span class="o">[</span>super-awesome<span class="o">]</span>
+</span><span class='line'><span class="c"># creates /source/super-awesome/index.markdown</span>
+</span><span class='line'>
+</span><span class='line'>rake new_page<span class="o">[</span>super-awesome/page.html<span class="o">]</span>
+</span><span class='line'><span class="c"># creates /source/super-awesome/page.html</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>像发布博文一样，默认后缀依然是markdown，但是你可以再Rakefile中修改这个默认配置；一个干净的页面文件如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>---
+</span><span class='line'>layout: page
+</span><span class='line'>title: <span class="s2">&quot;Super Awesome&quot;</span>
+</span><span class='line'>date: 2011-07-03 5:59
+</span><span class='line'>comments: <span class="nb">true</span>
+</span><span class='line'>sharing: <span class="nb">true</span>
+</span><span class='line'>footer: <span class="nb">true</span>
+</span><span class='line'>---
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里的title来自于文件名。你也可以手动修改。跟博文的一样，除了不包含分类 categories，对于 <strong><em>sharing</em></strong> 和 <strong><em>comments</em></strong>  你可以关闭，对于 <strong><em>footer</em></strong>   你可以删除，这样就不会添加默认的footer信息到该页面；如果你不像要再页面中显示日期，可以删除这里的 <strong><em>date</em></strong> 。</p>
+
+<h4>内容</h4>
+
+<p>页面和博文会调用markup 引擎渲染，默认引擎是再配置文件中；此外，你可以使用任何<a href="http://jekyllrb.com/docs/variables/">Jekyll docs</a>中所介绍的<a href="https://github.com/Shopify/liquid/wiki/Liquid-for-Designers">模板特性</a>。</p>
+
+<p>默认首页是显示全文，要想仅仅显示摘要，请在合适的地方插入下面的代码</p>
+
+<pre><code> &lt;!-- more --&gt;
+</code></pre>
+
+<p>这个会生成一个&#8221;Continue →&#8221; 链接来指向完整博文，这个跟wordpress的一样。</p>
+
+<h2>6.小结</h2>
+
+<p><a id="ruby_git_install">本文</a>主要是介绍如何利用octopress再github上搭建 一个博客，简述了完整步骤，同时介绍了博客涉及到的最常用的发布博文以及新建页面功能。</p>
+
+<p>更加高级一点的如自定义域名、评论系统、分享等后文会详述。其实就是前面省略的_config.yml配置文件的后面两大块。</p>
+
+<h2>参考链接：</h2>
 
 <ol>
 <li><a href="http://octopress.org/docs/">octopress</a></li>
 <li><a href="http://beyondvincent.com/blog/2013/08/03/108-creating-a-github-blog-using-octopress/">破船之家</a></li>
+<li><a href="http://allenyee.me/blog/2013/08/21/what-i-learned-from-hosting-octopress-on-github/">第一次rake deploy报错</a></li>
 </ol>
 
 ]]></content>
@@ -208,6 +401,9 @@ gem 'github-pages'
 <p>后面会逐渐以这个平台为主发布自己的博客，老的wordpress里的老文章会挑选大部分过来，如有可能，两个平台都会更新的。</p>
 
 <p>^_^  后面的请无视，测试并熟悉一下markdown而已</p>
+
+<!-- more -->
+
 
 <h1>一级标题</h1>
 
