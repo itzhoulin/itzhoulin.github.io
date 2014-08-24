@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://itzhoulin.github.io/sitemap.xml 
+Sitemap: http://blog.itzhoulin.com/sitemap.xml 
