@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[zhoulin的IT工作之旅]]></title>
-  <link href="http://itzhoulin.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Test | zhoulin的IT工作之旅]]></title>
+  <link href="http://itzhoulin.github.io/blog/categories/test/atom.xml" rel="self"/>
   <link href="http://itzhoulin.github.io/"/>
   <updated>2014-08-24T11:33:14+08:00</updated>
   <id>http://itzhoulin.github.io/</id>
@@ -36,14 +36,10 @@
 
 <hr />
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/python</span>
-</span><span class='line'><span class="c">#这里测试代码</span>
-</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="s">&quot;Hello World !&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<pre><code class="python">#!/usr/bin/python
+#这里测试代码
+print("Hello World !")
+</code></pre>
 
 <hr />
 
@@ -75,7 +71,7 @@
 
 <p>传图却是一件相对而言麻烦一点点的事。
 看个美女放松一下
-<img class="center" src="http://itzhoulin.github.io/images/2014-08-24-1-helloworld.jpg" title="[图片测试] [图片测试]" ></p>
+<img class="center" src="/images/2014-08-24-1-helloworld.jpg" title="[图片测试] [图片测试]" ></p>
 ]]></content>
   </entry>
   
