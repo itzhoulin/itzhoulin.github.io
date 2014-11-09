@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ceph | zhoulin的IT工作之旅]]></title>
+  <link href="http://blog.itzhoulin.com/blog/categories/ceph/atom.xml" rel="self"/>
+  <link href="http://blog.itzhoulin.com/"/>
+  <updated>2014-11-09T21:16:29+08:00</updated>
+  <id>http://blog.itzhoulin.com/</id>
+  <author>
+    <name><![CDATA[zhoulin]]></name>
+    <email><![CDATA[zhoulin@itzhoulin.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ceph监控管理-inkscope安装手册]]></title>
+    <link href="http://blog.itzhoulin.com/blog/2014/11/09/cephjian-kong-guan-li-inkscopean-zhuang-shou-ce/"/>
+    <updated>2014-11-09T20:40:21+08:00</updated>
+    <id>http://blog.itzhoulin.com/blog/2014/11/09/cephjian-kong-guan-li-inkscopean-zhuang-shou-ce</id>
+    <content type="html"><![CDATA[<p>inkscope是一个ceph的监控和管理接口，使用nosql解决方案，使用mongodb存储实时热数据和历史数据，两种数据来源于不同的收集器。 官方的安装手册其实已经很详尽了，只是有那么一点点坑，所以把 关键一点的记录一下，兴许对你有用</p>
+
+<!-- more -->
+
+
+<h1>prequisites Inkscope needs severals other products:</h1>
+
+<ul>
+  <li>
+    <a style="color: #4183c4;" href="http://httpd.apache.org/">Apache 2</a>
+  </li>
+  <li>
+    <a style="color: #4183c4;" href="http://mongodb.org/">MongoDb</a>
+  </li>
+</ul>
+
+
+<p>
+Download all the directories of the inkScope project to a folder of your choice,in the following stages, we have chosen <strong>/var/www/inkscope</strong>.</p>
+
+<h1>Installation</h1>
+
+<h2>Installation of inkscopeViz Apache V2 is already installed</h2>
+
+<ol class="task-list list-paddingleft-2">
+  <li>
+    Choose a tcp port for inkScope<em>in the following stages, we have chosen 8080</em>
+  </li>
+  <li>
+    Modify Apache conf file /etc/apache2/port.conf to add the following line <pre>Listen 8080</pre>
+  </li>
+  
+  <li>
+    Create a virtual host named <strong>inkScope</strong>in the folder <em>/etc/apache2/sites-available</em> , create a file <em>inkScope.conf</em> with this content:
+     <pre>&lt;VirtualHost *:8080&gt;
+    ServerName  localhost
+    ServerAdmin webmaster@localhost
+
+    DocumentRoot {inkScope_folder}
+    &lt;Directory "{inkScope_folder}"&gt;
+        Options All
+        AllowOverride All
+    &lt;/Directory&gt;
+
+    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+    &lt;Directory "/usr/lib/cgi-bin"&gt;
+        AllowOverride None
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+        Order allow,deny
+        Allow from all
+    &lt;/Directory&gt;
+
+    WSGIScriptAlias /inkscopeCtrl {inkScope_folder}/inkscopeCtrl/inkscopeCtrl.wsgi
+    &lt;Directory "{inkScope_folder}/inkScopeCtrl"&gt;
+        Order allow,deny
+        Allow from all
+    &lt;/Directory&gt;
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel warn
+
+    ProxyRequests Off  # we don't want a "forward proxy", but only a "Reverse proxy"
+    ProxyPass /ceph-rest-api/ {ceph_rest_api_url}
+
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+&lt;/VirtualHost&gt;</pre> 
+
+Be sure to modify 
+    
+    <em>{inkScope_folder}</em> and <em>{ceph_rest_api_url}</em> with the appropriate values <span style="color: #ff0000;">这里ceph_rest_api_url应该是完成API路径，如：http://10.1.2.3:5000/api/v0.1/该地址即为启动了ceph_rest_api进程的节点IP加上端口和api版本即可。</span>
+  </li>
+  <li>
+    Enable proxy module in Apache (if not already enabled) <pre>sudo a2enmod proxy_http
+sudo service apache2 restart</pre>
+  </li>
+  
+  <li>
+    Enable InkScope virtual host: <pre>sudo a2ensite inkScope</pre> No need to restart Apache at this time
+  </li>
+</ol>
+
+
+<h2>Installation of inkscopeCtrl</h2>
+
+<ol class="task-list list-paddingleft-2">
+    <li>
+      install mod-wgsi for Apache <pre>sudo apt-get install libapache2-mod-wsgi</pre>
+    </li>
+    
+    <li>
+      install python dependencies : pymongo, python-requests, and flask 0.10.1if pip is not installed, <pre>sudo apt-get install python-pip</pre> for pymongo: 
+      
+      <pre>sudo easy_install pymongo or sudo pip install pymongo</pre> for flask: 
+      
+      <pre>sudo easy_install flask or sudo pip install flask</pre> If you are running Ubuntu 12.04 or an earlier version, you need to get your python-requests module updated to a version >= 1.1.0.
+    </li>
+    
+    <li>
+      run <em>install.sh</em> in inkscopeCtrl directory to copy conf files in /opt/inkscope/etcmodify /opt/inkscope/etc/inkscopeCtrl.conf to change: <ul class="task-list list-paddingleft-2">
+        <li>
+          mongoDB parameters (mainly mongodb_host)
+        </li>
+        <li>
+          radosgw parameters ( Do not forget to grant the required capabilities [usage, users, metadata, buckets] to the admin-user).
+        </li>
+      </ul>
+    </li>
+
+<span style="color: #ff0000;">这里请注意，原版的配置文件模板有点问题，配置文件每一项配置务必要以逗号结束，最后一项无需逗号， 其次radosgw_url应以http开头，radosgw_admin的值则为admin，参考模板如下 ：</span> 
+
+<pre>{
+ "mongodb_host" : "10.1.11.21", 
+"mongodb_port" : "27017", 
+"mongodb_user" :"ceph", 
+"mongodb_passwd":"", 
+"radosgw_url": "http://10.1.36.13", 
+"radosgw_admin": "admin", 
+"radosgw_key": "11111", 
+"radosgw_secret": "11111",   
+"is_mongo_replicat" : 0, 
+"mongodb_set" :"host_mongodb1:port,host_mongodb2:port,host_mongodb3:port",
+"mongodb_replicaSet" : "replicaset_name", 
+"mongodb_read_preference" : "ReadPreference.{your_read_preference_choice}" 
+} </pre>
+</ol>
+
+
+<h2>Installation of InkscopeProbe</h2>
+
+<p><strong><em>InkscopeProbe</em></strong> collects Ceph cluster metrics and host metrics and put them in a database named as the cluster and put the data in dedicated mongodb collection. The datamodel is described in datamodel.txt and datamodeloverview.odp</p>
+
+<h3>Prerequisites</h3>
+
+<ul class="task-list list-paddingleft-2">
+  <li>
+    needs a <a style="color: #4183c4;" href="http://www.mongodb.org/">mongodb</a> database&#8212;-<span style="color: #ff0000;">这里整个项目使用同一个mongodb，因此需要开启inkscope所在节点mongodb的远程连接，方法是编辑mongodb配置文件，默认位置是/etc/mongodb.conf,将bind_ip修改为0.0.0.0，取消port的注释，默认端口是27017，重启mongodb服务器即可。</span>
+  </li>
+  <li>
+    needs a <strong>ceph-rest-api</strong> active on a machine
+  </li>
+  <li>
+    needs package <strong>python-dev</strong> (on every host)sudo apt-get install python-dev
+  </li>
+  <li>
+    needs <strong>psutil</strong> python module (on every host)sudo easy_install psutil
+  </li>
+  <li>
+    needs <strong>pymongo</strong> python module (on every host)sudo easy_install pymongo
+  </li>
+  <li>
+    <span style="color: #ff0000;">由于sysprobe和cephprobe可能需要再非inkscope节点上部署，因此凡是需要部署probe服务的节点都需要安装python-dev,psutil,pymongo。</span>
+  </li>
+</ul>
+
+
+<p>  </ol>
+</ol></p>
+
+<h3>Installation</h3>
+
+<p> run <strong><em>install.sh</em></strong> in inkscopeProbe directory to copy conf files in /opt/inkscope/etc and scripts in/opt/inkscope/bin You could make a link in /etc/init.d Two daemons are defined: <ul class="task-list list-paddingleft-2">
+  <li>
+    sysprobe to collect system information; it must be installed on each machine running Ceph nodes (mon, mds, osd&hellip;)
+  </li>
+  <li>
+    cephprobe to collect ceph cluster information; it must be installed on only one machine running a Ceph node
+  </li>
+  <li>
+    <span style="color: #ff0000;">将配置文件以及脚本(包含daemon.py)拷贝到需要启动probe服务的节点，start该服务即可。</span>
+  </li>
+</ul></p>
+
+<h3>SysProbe configuration</h3>
+
+<p>Sysprobe collect and push the informations into a mongodb. The config file should be stored at /opt/inkscope/etc/sysprobe.conf and should look like this (json format). The unit of the refresh times is second.</p>
+
+<p>You must adapt the values to your environment (mainly mongodb_host).</p>
+
+<pre>    {
+    "mongodb_host" : "10.1.11.21",
+    "is_mongo_replicat" : 0,
+    "mongodb_set" : "mongodb0:27017,mongodb1:27017,mongodb2:27017",
+    "mongodb_replicaSet" : "replmongo0",
+    "mongodb_read_preference" : "ReadPreference.SECONDARY_PREFERRED",
+    "mongodb_port" : 27017,
+    "is_mongo_authenticate" : 0,
+    "mongodb_user":"ceph",
+    "mongodb_passwd":"monpassword",
+    "cluster": "ceph",
+    "mem_refresh": 60,
+    "swap_refresh": 600,
+    "disk_refresh": 60,
+    "partition_refresh": 60,
+    "cpu_refresh": 30,
+    "net_refresh": 30,
+    "mem_window": 1200,
+    "swap_window": 3600,
+    "disk_window": 1200,
+    "partition_window": 1200,
+    "cpu_window": 1200,
+    "net_window": 1200
+    }</pre>
+
+
+<p>Sysprobe is defined as a daemon:</p>
+
+<pre><code>sysprobe.py start|stop|restart
+</code></pre>
+
+<h3>CephProbe configuration</h3>
+
+<p>A Ceph info collector (cephprobe.py) should be run on a node thant can access to ceph-rest-api and the mongodb.</p>
+
+<p>The config file be stored at /opt/inkscope/etc/cephprobe.conf and should look like this (json format). The unit of the refresh times is second.</p>
+
+<p>You must adapt the values to your environment (mainly mongodb_host and ceph_rest_api).</p>
+
+<pre>    {
+      "mongodb_host" : "10.1.11.21",
+      "is_mongo_replicat" : 0,
+      "mongodb_set" : "mongodb0:27017,mongodb1:27017,mongodb2:27017",
+      "mongodb_replicaSet" : "replmongo0",
+      "mongodb_read_preference" : "ReadPreference.SECONDARY_PREFERRED",
+      "mongodb_port" : 27017,
+      "is_mongo_authenticate" : 0,
+      "mongodb_user":"ceph",
+      "mongodb_passwd":"monpasswd",
+      "cluster" : "ceph",
+      "ceph_conf": "/etc/ceph/ceph.conf",
+      "ceph_rest_api": "10.1.36.11:5000",
+      "status_refresh": 3,
+      "osd_dump_refresh": 3,
+      "pg_dump_refresh": 60,
+      "crushmap_refresh": 60,
+      "df_refresh": 60,
+      "cluster_window": 1200,
+      "osd_window": 1200,
+      "pool_window": 1200
+    }</pre>
+
+
+<p>Cephprobe is defined as a daemon:</p>
+
+<pre><code>cephprobe.py start|stop|restart
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

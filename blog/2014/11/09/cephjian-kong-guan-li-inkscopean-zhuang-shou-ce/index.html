@@ -1,0 +1,461 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Ceph监控管理-inkscope安装手册 - zhoulin的IT工作之旅</title>
+  <meta name="author" content="zhoulin">
+
+  
+  <meta name="description" content="inkscope是一个ceph的监控和管理接口，使用nosql解决方案，使用mongodb存储实时热数据和历史数据，两种数据来源于不同的收集器。 官方的安装手册其实已经很详尽了，只是有那么一点点坑，所以把 关键一点的记录一下，兴许对你有用 prequisites Inkscope needs &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.itzhoulin.com/blog/2014/11/09/cephjian-kong-guan-li-inkscopean-zhuang-shou-ce">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="zhoulin的IT工作之旅" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!--<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-53900846-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">zhoulin的IT工作之旅</a></h1>
+  
+    <h2>云计算、备份、S3、python、shell</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.itzhoulin.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Ceph监控管理-inkscope安装手册</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-11-09T20:40:21+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>8:40 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>inkscope是一个ceph的监控和管理接口，使用nosql解决方案，使用mongodb存储实时热数据和历史数据，两种数据来源于不同的收集器。 官方的安装手册其实已经很详尽了，只是有那么一点点坑，所以把 关键一点的记录一下，兴许对你有用</p>
+
+<!-- more -->
+
+
+<h1>prequisites Inkscope needs severals other products:</h1>
+
+<ul>
+  <li>
+    <a style="color: #4183c4;" href="http://httpd.apache.org/">Apache 2</a>
+  </li>
+  <li>
+    <a style="color: #4183c4;" href="http://mongodb.org/">MongoDb</a>
+  </li>
+</ul>
+
+
+<p>
+Download all the directories of the inkScope project to a folder of your choice,in the following stages, we have chosen <strong>/var/www/inkscope</strong>.</p>
+
+<h1>Installation</h1>
+
+<h2>Installation of inkscopeViz Apache V2 is already installed</h2>
+
+<ol class="task-list list-paddingleft-2">
+  <li>
+    Choose a tcp port for inkScope<em>in the following stages, we have chosen 8080</em>
+  </li>
+  <li>
+    Modify Apache conf file /etc/apache2/port.conf to add the following line <pre>Listen 8080</pre>
+  </li>
+  
+  <li>
+    Create a virtual host named <strong>inkScope</strong>in the folder <em>/etc/apache2/sites-available</em> , create a file <em>inkScope.conf</em> with this content:
+     <pre>&lt;VirtualHost *:8080&gt;
+    ServerName  localhost
+    ServerAdmin webmaster@localhost
+
+    DocumentRoot {inkScope_folder}
+    &lt;Directory "{inkScope_folder}"&gt;
+        Options All
+        AllowOverride All
+    &lt;/Directory&gt;
+
+    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+    &lt;Directory "/usr/lib/cgi-bin"&gt;
+        AllowOverride None
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+        Order allow,deny
+        Allow from all
+    &lt;/Directory&gt;
+
+    WSGIScriptAlias /inkscopeCtrl {inkScope_folder}/inkscopeCtrl/inkscopeCtrl.wsgi
+    &lt;Directory "{inkScope_folder}/inkScopeCtrl"&gt;
+        Order allow,deny
+        Allow from all
+    &lt;/Directory&gt;
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel warn
+
+    ProxyRequests Off  # we don't want a "forward proxy", but only a "Reverse proxy"
+    ProxyPass /ceph-rest-api/ {ceph_rest_api_url}
+
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+&lt;/VirtualHost&gt;</pre> 
+
+Be sure to modify 
+    
+    <em>{inkScope_folder}</em> and <em>{ceph_rest_api_url}</em> with the appropriate values <span style="color: #ff0000;">这里ceph_rest_api_url应该是完成API路径，如：http://10.1.2.3:5000/api/v0.1/该地址即为启动了ceph_rest_api进程的节点IP加上端口和api版本即可。</span>
+  </li>
+  <li>
+    Enable proxy module in Apache (if not already enabled) <pre>sudo a2enmod proxy_http
+sudo service apache2 restart</pre>
+  </li>
+  
+  <li>
+    Enable InkScope virtual host: <pre>sudo a2ensite inkScope</pre> No need to restart Apache at this time
+  </li>
+</ol>
+
+
+<h2>Installation of inkscopeCtrl</h2>
+
+<ol class="task-list list-paddingleft-2">
+    <li>
+      install mod-wgsi for Apache <pre>sudo apt-get install libapache2-mod-wsgi</pre>
+    </li>
+    
+    <li>
+      install python dependencies : pymongo, python-requests, and flask 0.10.1if pip is not installed, <pre>sudo apt-get install python-pip</pre> for pymongo: 
+      
+      <pre>sudo easy_install pymongo or sudo pip install pymongo</pre> for flask: 
+      
+      <pre>sudo easy_install flask or sudo pip install flask</pre> If you are running Ubuntu 12.04 or an earlier version, you need to get your python-requests module updated to a version >= 1.1.0.
+    </li>
+    
+    <li>
+      run <em>install.sh</em> in inkscopeCtrl directory to copy conf files in /opt/inkscope/etcmodify /opt/inkscope/etc/inkscopeCtrl.conf to change: <ul class="task-list list-paddingleft-2">
+        <li>
+          mongoDB parameters (mainly mongodb_host)
+        </li>
+        <li>
+          radosgw parameters ( Do not forget to grant the required capabilities [usage, users, metadata, buckets] to the admin-user).
+        </li>
+      </ul>
+    </li>
+
+<span style="color: #ff0000;">这里请注意，原版的配置文件模板有点问题，配置文件每一项配置务必要以逗号结束，最后一项无需逗号， 其次radosgw_url应以http开头，radosgw_admin的值则为admin，参考模板如下 ：</span> 
+
+<pre>{
+ "mongodb_host" : "10.1.11.21", 
+"mongodb_port" : "27017", 
+"mongodb_user" :"ceph", 
+"mongodb_passwd":"", 
+"radosgw_url": "http://10.1.36.13", 
+"radosgw_admin": "admin", 
+"radosgw_key": "11111", 
+"radosgw_secret": "11111",   
+"is_mongo_replicat" : 0, 
+"mongodb_set" :"host_mongodb1:port,host_mongodb2:port,host_mongodb3:port",
+"mongodb_replicaSet" : "replicaset_name", 
+"mongodb_read_preference" : "ReadPreference.{your_read_preference_choice}" 
+} </pre>
+</ol>
+
+
+<h2>Installation of InkscopeProbe</h2>
+
+<p><strong><em>InkscopeProbe</em></strong> collects Ceph cluster metrics and host metrics and put them in a database named as the cluster and put the data in dedicated mongodb collection. The datamodel is described in datamodel.txt and datamodeloverview.odp</p>
+
+<h3>Prerequisites</h3>
+
+<ul class="task-list list-paddingleft-2">
+  <li>
+    needs a <a style="color: #4183c4;" href="http://www.mongodb.org/">mongodb</a> database----<span style="color: #ff0000;">这里整个项目使用同一个mongodb，因此需要开启inkscope所在节点mongodb的远程连接，方法是编辑mongodb配置文件，默认位置是/etc/mongodb.conf,将bind_ip修改为0.0.0.0，取消port的注释，默认端口是27017，重启mongodb服务器即可。</span>
+  </li>
+  <li>
+    needs a <strong>ceph-rest-api</strong> active on a machine
+  </li>
+  <li>
+    needs package <strong>python-dev</strong> (on every host)sudo apt-get install python-dev
+  </li>
+  <li>
+    needs <strong>psutil</strong> python module (on every host)sudo easy_install psutil
+  </li>
+  <li>
+    needs <strong>pymongo</strong> python module (on every host)sudo easy_install pymongo
+  </li>
+  <li>
+    <span style="color: #ff0000;">由于sysprobe和cephprobe可能需要再非inkscope节点上部署，因此凡是需要部署probe服务的节点都需要安装python-dev,psutil,pymongo。</span>
+  </li>
+</ul>
+
+
+<p>  </ol>
+</ol></p>
+
+<h3>Installation</h3>
+
+<p> run <strong><em>install.sh</em></strong> in inkscopeProbe directory to copy conf files in /opt/inkscope/etc and scripts in/opt/inkscope/bin You could make a link in /etc/init.d Two daemons are defined: <ul class="task-list list-paddingleft-2">
+  <li>
+    sysprobe to collect system information; it must be installed on each machine running Ceph nodes (mon, mds, osd&hellip;)
+  </li>
+  <li>
+    cephprobe to collect ceph cluster information; it must be installed on only one machine running a Ceph node
+  </li>
+  <li>
+    <span style="color: #ff0000;">将配置文件以及脚本(包含daemon.py)拷贝到需要启动probe服务的节点，start该服务即可。</span>
+  </li>
+</ul></p>
+
+<h3>SysProbe configuration</h3>
+
+<p>Sysprobe collect and push the informations into a mongodb. The config file should be stored at /opt/inkscope/etc/sysprobe.conf and should look like this (json format). The unit of the refresh times is second.</p>
+
+<p>You must adapt the values to your environment (mainly mongodb_host).</p>
+
+<pre>    {
+    "mongodb_host" : "10.1.11.21",
+    "is_mongo_replicat" : 0,
+    "mongodb_set" : "mongodb0:27017,mongodb1:27017,mongodb2:27017",
+    "mongodb_replicaSet" : "replmongo0",
+    "mongodb_read_preference" : "ReadPreference.SECONDARY_PREFERRED",
+    "mongodb_port" : 27017,
+    "is_mongo_authenticate" : 0,
+    "mongodb_user":"ceph",
+    "mongodb_passwd":"monpassword",
+    "cluster": "ceph",
+    "mem_refresh": 60,
+    "swap_refresh": 600,
+    "disk_refresh": 60,
+    "partition_refresh": 60,
+    "cpu_refresh": 30,
+    "net_refresh": 30,
+    "mem_window": 1200,
+    "swap_window": 3600,
+    "disk_window": 1200,
+    "partition_window": 1200,
+    "cpu_window": 1200,
+    "net_window": 1200
+    }</pre>
+
+
+<p>Sysprobe is defined as a daemon:</p>
+
+<pre><code>sysprobe.py start|stop|restart
+</code></pre>
+
+<h3>CephProbe configuration</h3>
+
+<p>A Ceph info collector (cephprobe.py) should be run on a node thant can access to ceph-rest-api and the mongodb.</p>
+
+<p>The config file be stored at /opt/inkscope/etc/cephprobe.conf and should look like this (json format). The unit of the refresh times is second.</p>
+
+<p>You must adapt the values to your environment (mainly mongodb_host and ceph_rest_api).</p>
+
+<pre>    {
+      "mongodb_host" : "10.1.11.21",
+      "is_mongo_replicat" : 0,
+      "mongodb_set" : "mongodb0:27017,mongodb1:27017,mongodb2:27017",
+      "mongodb_replicaSet" : "replmongo0",
+      "mongodb_read_preference" : "ReadPreference.SECONDARY_PREFERRED",
+      "mongodb_port" : 27017,
+      "is_mongo_authenticate" : 0,
+      "mongodb_user":"ceph",
+      "mongodb_passwd":"monpasswd",
+      "cluster" : "ceph",
+      "ceph_conf": "/etc/ceph/ceph.conf",
+      "ceph_rest_api": "10.1.36.11:5000",
+      "status_refresh": 3,
+      "osd_dump_refresh": 3,
+      "pg_dump_refresh": 60,
+      "crushmap_refresh": 60,
+      "df_refresh": 60,
+      "cluster_window": 1200,
+      "osd_window": 1200,
+      "pool_window": 1200
+    }</pre>
+
+
+<p>Cephprobe is defined as a daemon:</p>
+
+<pre><code>cephprobe.py start|stop|restart
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">zhoulin</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2014-11-09T20:40:21+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>8:40 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ceph/'>ceph</a>, <a class='category' href='/blog/categories/cloud/'>cloud</a>, <a class='category' href='/blog/categories/inkscope/'>inkscope</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/08/24/deploy-a-blog-using-octopress-hosted-in-github/" title="Previous Post: deploy a blog using octopress hosted in github">&laquo; deploy a blog using octopress hosted in github</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="comments" aria-live="polite"><!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread"></div>
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"itzhoulin-github"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+<!-- Duoshuo Comment END -->
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/11/09/cephjian-kong-guan-li-inkscopean-zhuang-shou-ce/">Ceph监控管理-inkscope安装手册</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/24/deploy-a-blog-using-octopress-hosted-in-github/">Deploy a Blog Using Octopress Hosted in Github</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/24/new-blog-using-octopress-with-github-page/">New Blog Using Octopress With Github Page</a>
+      </li>
+    
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - zhoulin -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fbfda7d8af83db2f5572810a41e5bd3f1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+</body>
+</html>
