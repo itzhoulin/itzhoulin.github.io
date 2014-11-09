@@ -5,7 +5,8 @@ date: 2014-11-09 20:40:21 +0800
 comments: true
 categories: [cloud, ceph, inkscope]
 ---
-inkscope是一个ceph的监控和管理接口，使用nosql解决方案，使用mongodb存储实时热数据和历史数据，两种数据来源于不同的收集器。 官方的安装手册其实已经很详尽了，只是有那么一点点坑，所以把 关键一点的记录一下，兴许对你有用   
+inkscope是一个ceph的监控和管理接口，使用nosql解决方案，使用mongodb存储实时热数据和历史数据，两种数据来源于不同的收集器。 官方的安装手册其实已经很详尽了，只是有那么一点点坑，所以把 关键一点的记录一下，兴许对你有用 
+<!-- more -->
 # prequisites Inkscope needs severals other products: 
 
 <ul>
