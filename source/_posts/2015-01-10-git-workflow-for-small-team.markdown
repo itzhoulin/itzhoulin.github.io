@@ -12,7 +12,8 @@ categories: [git, worktile]
 git太博大精深了，不同的团队规模、不同时期或者其他因素都可能会有不同的最适宜的工作流。目前我们团队固定开发人员4人，不定期支撑1人（高手），没有专职的测试QA等，主要是针对已有产品的二次开发，因此更多的是部分功能上的改造和一些bug的修复，因此基本是发现了、有需求了、谁手头比较空余就来负责这个任务。
 
 下图是一个简单的流程图，这里面主要是两种人物角色，A是开发人员，B是除A外的其他开发人员，这里兼职测试（后文标题以**人员.操作步骤**）。本文以gitlab里面的库[http://git.itzhoulin.com/zhoulin/test.git](http://git.itzhoulin.com/zhoulin/test.git)为例，远程库除了master分之外还有develop分支，***master存放随时可以发布的版本，develop存放经测试通过的任务***。
-{% img left /images/git-workflow.png  git-workflow  %}
+
+{% img center /images/git-workflow.png  git-workflow  %}
 
 ## A.1克隆代码到本地
 如果A本地还没有远程库的代码，执行下述clone操作获取远程库所有代码信息：
